@@ -1,0 +1,17 @@
+[package]
+name = "wg-switch"
+version = "0.1.0"
+authors = ["aalhitennf <paananen.olli@tuta.io>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nix = "0.19.1"
+rand = "0.8.0"
+
+[profile.release]
+opt-level = 'z'  # Optimize for size.
+lto = true
+codegen-units = 1 
+panic = 'abort'
