@@ -17,7 +17,7 @@ Simple wrapper for quick switching wireguard interfaces on linux systems. It rea
 
 **install**
 
-`git clone https://github.com/aalhitennf/wg-switch.git`
-`cd wg-switch`
-`cargo build --release`
+`git clone https://github.com/aalhitennf/wg-switch.git`  
+`cd wg-switch`  
+`cargo build --release`  
 `sudo ./install.sh` or copy `target/release/wg-switch` to `/usr/bin` or where ever you store your executables.
