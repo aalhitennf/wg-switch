@@ -4,9 +4,8 @@ pub mod systemd {
 
     pub fn set(interface: &str, action: &str) {
         let service_name = ["wg-quick@", interface, ".service"].join("");
-        let args: [&str; 2] = [action, &service_name];
+        let args: &[&str] = &[action, &service_name];
         let command = ("systemctl", args);
-        println!("{} {}", action, command.1[1]);
         with_shell(command);
     }
 

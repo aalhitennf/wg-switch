@@ -8,6 +8,5 @@ pub fn interface_exists(interface: String) -> bool {
 }
 
 pub fn is_root() -> bool {
-    let uid = getuid();
-    return uid.as_raw() == 0;
+    return getuid().as_raw() == 0;
 }
