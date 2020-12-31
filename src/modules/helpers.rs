@@ -1,30 +1,21 @@
 pub mod run {
 
-    use std::process::Command;
-
-    // pub fn shell_with_output(command: (&str, [&str; 1])) -> Vec<u8>{
-    //     let output = Command::new(command.0)
-    //         .args(&command.1)
-    //         .output()
-    //         .expect("Failed to run command");
-    //     return output.stdout;
-    // }
-
     pub fn with_shell(command: (&str, &[&str])) -> Vec<u8> {
-        let output = Command::new(command.0)
+        let output = std::process::Command::new(command.0)
             .args(command.1)
             .output()
             .expect("Failed to run command");
-        return output.stdout;
+        output.stdout
     }
 
 }
 
 pub mod trim {
 
+    use crate::modules::config::Config;
+
     fn shell_output_to_string(stdout: Vec<u8>) -> String {
-        let encoded = String::from_utf8_lossy(stdout.as_slice());
-        return String::from(encoded);
+        String::from(String::from_utf8_lossy(stdout.as_slice()))
     }
 
     pub fn interfaces(output: Vec<u8>) -> Vec<String> {
@@ -38,7 +29,32 @@ pub mod trim {
                 interfaces.push(String::from(interface_name));
             }
         }
-        return interfaces;
+        interfaces
+    }
+
+    pub fn user_home(output: Vec<u8>) -> String {
+        let trimmed = shell_output_to_string(output);
+        let parts: Vec<&str> = trimmed.split(":").collect();
+        String::from(parts[5])
+    }
+
+    pub fn config(content: String) -> Config {
+        let mut config = Config {
+            defaults: true,
+            systemd: true
+        };
+        let lines = content.split("\n");
+        for line in lines {
+            // Skip commented lines
+            if line.starts_with("#") {
+                continue;
+            }
+            if line == "nosystemd" {
+                config.defaults = false;
+                config.systemd = false;
+            }
+        }
+        config
     }
 
 }
@@ -46,7 +62,7 @@ pub mod trim {
 pub mod find {
 
     pub fn index_of_string(vector: &Vec<String>, of: &String) -> i32 {
-        return vector.iter().position(|r| r == of).unwrap() as i32;
+        vector.iter().position(|r| r == of).unwrap() as i32
     } 
 
 }

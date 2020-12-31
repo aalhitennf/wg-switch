@@ -21,3 +21,6 @@ Simple wrapper for quick switching wireguard interfaces on linux systems. It rea
 `cd wg-switch`  
 `cargo build --release`  
 `sudo ./install.sh` or copy `target/release/wg-switch` to `/usr/bin` or where ever you store your executables.
+
+**config**
+wg-switch reads config from `$HOME/.config/wg-switch/config`, if 

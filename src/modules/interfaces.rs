@@ -7,6 +7,8 @@ pub mod set {
     use crate::modules::interfaces;
     use crate::modules::services;
 
+    use crate::modules::config::CONFIG;
+
     pub fn disable_all() {
         let active_interfaces = interfaces::get::active();
         for interface in active_interfaces {
@@ -24,7 +26,11 @@ pub mod set {
         // Disable interface
         helpers::run::with_shell(command);
         // Disable and stop service
-        services::systemd::set(interface, "disable");
+        if CONFIG.systemd {
+            println!("Disabling systemd service");
+            services::systemd::set(interface, "disable");
+        }
+        
     }
 
     pub fn enable(interface: &str) {
@@ -40,7 +46,11 @@ pub mod set {
         // Enable interface
         helpers::run::with_shell(command);
         // Enable and start service
-        services::systemd::set(interface, "enable");
+        if CONFIG.systemd {
+            println!("Enabling systemd service");
+            services::systemd::set(interface, "enable");
+        }
+
     }
 
 }
@@ -55,7 +65,7 @@ pub mod get {
     pub fn active() -> Vec<String> {
         let command: (&str, &[&str]) = ("wg", &["show"]);
         let output = helpers::run::with_shell(command);
-        return helpers::trim::interfaces(output);
+        helpers::trim::interfaces(output)
     }
 
     pub fn available() -> Vec<String> {
@@ -71,7 +81,7 @@ pub mod get {
             available.push(conf_name);
         }
         available.sort();
-        return available;
+        available
     }
 
     // Return next interface name from available in conf directory
@@ -103,7 +113,7 @@ pub mod get {
             let next_index = current_index + 1;
             next_interface = &available_names[(next_index as usize)];
         }
-        return String::from(next_interface);
+        String::from(next_interface)
     }
 
     // Returns random interface name that is not currently active
@@ -137,7 +147,7 @@ pub mod get {
         } else {
             random_index = rng.gen_range(0 .. available_amount);
         }
-        return String::from(&available_names[(random_index as usize)]);
+        String::from(&available_names[(random_index as usize)])
     }
 
 }

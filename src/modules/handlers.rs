@@ -1,4 +1,5 @@
 use crate::modules::interfaces;
+use crate::modules::config;
 
 // Handle the giver argument
 pub fn handle(args: Vec<String>) {
@@ -7,6 +8,7 @@ pub fn handle(args: Vec<String>) {
         "next" => next(false),
         "show" => show(),
         "random" => next(true),
+        "config" => config::print(),
         _ => start(args)
     }
 }

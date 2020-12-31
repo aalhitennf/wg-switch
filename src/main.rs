@@ -4,11 +4,13 @@ use std::process;
 mod modules;
 
 fn main() {
+
     // Return if not root
     if modules::checkers::is_root() == false {
-        println!("You need root privileges.");
+        println!("Requires root privileges.");
         process::exit(1);
     }
+
     // Return if no args
     let mut args: Vec<String> = env::args().collect();
     args.remove(0);
