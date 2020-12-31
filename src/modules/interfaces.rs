@@ -27,7 +27,6 @@ pub mod set {
         helpers::run::with_shell(command);
         // Disable and stop service
         if CONFIG.systemd {
-            println!("Disabling systemd service");
             services::systemd::set(interface, "disable");
         }
         
@@ -47,7 +46,6 @@ pub mod set {
         helpers::run::with_shell(command);
         // Enable and start service
         if CONFIG.systemd {
-            println!("Enabling systemd service");
             services::systemd::set(interface, "enable");
         }
 
@@ -87,7 +85,7 @@ pub mod get {
     // Return next interface name from available in conf directory
     pub fn next() -> String {
         // Get available and active
-        let next_interface: &str;
+        // let next_interface: &str;
         let available_names = available();
         let available_amount = available_names.len() as i32;
         let active_names = active();
@@ -97,10 +95,10 @@ pub mod get {
             println!("No available interfaces.");
             process::exit(1);
         }
-        // Get first available if none active
-        if active_amount == 0 {
-            next_interface = &available_names[0];
-        } else { // Otherwise get next
+        // Get next interface, use first available if none active
+        let next_interface: &String = if active_amount == 0 {
+            &available_names[0]
+        } else {
             // Get current interface index
             let mut current_index = helpers::find::index_of_string(
                 &available_names, &active_names[0]
@@ -111,8 +109,8 @@ pub mod get {
             }
             // Set next
             let next_index = current_index + 1;
-            next_interface = &available_names[(next_index as usize)];
-        }
+            &available_names[(next_index as usize)]
+        };
         String::from(next_interface)
     }
 
@@ -129,24 +127,22 @@ pub mod get {
             process::exit(1);
         }
         // Randomize and perevent getting same interface
-        let mut random_index: i32 = 0;
         let mut rng = rand::thread_rng();
-        if active_amount > 0 {
+        let random_index: i32 = if active_amount > 0 {
             // Get current interface index
             let current_index = helpers::find::index_of_string(
                 &available_names, &active_names[0]
             );
             // Get random
-            let mut done = false;
-            while !done {
-                random_index = rng.gen_range(0 .. available_amount);
-                if random_index != current_index {
-                    done = true;
+            loop {
+                let random = rng.gen_range(0 .. available_amount);
+                if random != current_index {
+                    break random
                 }
             }
         } else {
-            random_index = rng.gen_range(0 .. available_amount);
-        }
+            rng.gen_range(0 .. available_amount)
+        };
         String::from(&available_names[(random_index as usize)])
     }
 
